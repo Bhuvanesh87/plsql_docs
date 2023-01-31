@@ -1,4 +1,6 @@
 SET SERVEROUTPUT ON;
+select sysdate from dual;
+
 
 
 CREATE OR REPLACE PROCEDURE P1  IS
