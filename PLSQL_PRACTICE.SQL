@@ -3,7 +3,7 @@ select sysdate from dual;
 
 
 
-CREATE OR REPLACE PROCEDURE P1  IS
+CREATE OR REPLACE PROCEDURE P1  AS
 VENAME VARCHAR2(10);
 VSAL NUMBER(5);
 VJOB VARCHAR2(10);
@@ -1141,9 +1141,134 @@ END  CUST_TAB;
 END;
 
 
-  EMP LIST WHO JOINED IN 2000  EMP NAME ENDS WITH S
+  EMP LIST WHO JOINED IN 2000  EMP NAME ENDS WITH S;
 
-SELECT * FROM EMPLOYEES  WHERE TO_CHAR(DOJ,'YYYY')='2000' AND EMP_NAME LIKE '%S';
+SELECT * FROM EMPLOYEES ;  WHERE TO_CHAR(DOJ,'YYYY')='2000' AND EMP_NAME LIKE '%S';
+
+
+
+CREATE TABLE 
+DECLARE
+TYPE CUST_TAB AS TABLE OF CUSTOMERS%ROWTYPE;
+CUST_TAB_VAR CUST_TAB;
+CURSOR C1 AS SELECT * FROM CUSTOMERS WHERE TRUNC(TRANSDATE) BETWEEN '01-JAN-2017' AND 31-DEC-22;
+BEGIN
+OPEN C1;
+FETCH C1 * BULK COLLECT INTO CUST_TAB_VAR ;
+RETURN WHEN C1%NOTFOUND;
+CLOSE C1;
+FORALL 
+ I IN CUST_TAB_VAR.FIRST..CUST_TAB_VAR.LAST SAVE EXPECPTION
+ 
+
+
+
+
+SET AUTOTRACE ON;
+
+EXECUTE PLAN FOR SELECT * FROM EMPLOYEES;
+
+
+
+
+with t as  (  select  rownum rn, to_char(to_date(rownum,'mm'),'Month') mon    from  dual   connect by level <= 12   )
+select   mon, count(HIRE_DATE) emp_cnt 
+from 
+t
+left outer join
+EMPLOYEES 
+on (mon = to_char(HIRE_DATE,'Month')) 
+group by mon,rn 
+order by rn
+;
+
+
+
+
+
+select  rownum rn, to_char(to_date(rownum,'mm'),'Month') mon    from  dual   connect by level <= 12 ;
+
+
+select  rownum rn, 
+             to_char(to_date(rownum,'mm'),'MON') mon    from  dual   connect by level <= 12 ;
+
+
+
+
+with t as  (  select  rownum rn, to_char(to_date(rownum,'mm'),'MON') mon    from  dual   connect by level <= 12   )
+select   mon, count(HIRE_DATE) emp_cnt 
+from 
+t
+left outer join
+EMPLOYEES 
+on (mon = to_char(HIRE_DATE,'MON')) 
+group by mon,rn 
+order by rn
+;
+
+
+
+
+
+
+
+SELECT * FROM EMP10;
+
+DESC EMP10;
+
+SELECT   ROUND(MONTHS_BETWEEN(TO_DATE(SYSDATE,'DD-MM-YYYY'),TO_DATE(DOJ,'DD-MM-YYYY') ) ) MONTHS FROM  EMP10;
+
+SELECT * FROM EMP10 WHERE
+ROUND(MONTHS_BETWEEN(TO_DATE(SYSDATE,'DD-MM-YYYY'),TO_DATE(DOJ,'DD-MM-YYYY'))) >=50;
+
+
+
+CREATE OR REPLACE PROCEDURE UPDATE_EMP10 AS
+DECLARE
+TYPE UPDATE_TAB  IS TABLE OF  EMP10%ROWTYPE;
+UPDATE_TAB1  UPDATE_TAB = UPDATE_TAB();
+CURSOR C1 AS SELECT * FROM EMP10 WHERE
+                       ROUND(MONTHS_BETWEEN(TO_DATE(SYSDATE,'DD-MM-YYYY'),TO_DATE(DOJ,'DD-MM-YYYY'))) >=50;
+BEGIN
+OPEN C1;
+FETCH C1 BULK COLLECT INTO UPDATE_TAB1;
+RETURN C1%NOTFOUND;
+CLOSE C1;
+FORALL I IN ;
+
+
+
+
+SELECT * FROM EMPLOYEES;
+
+DESC EMPLOYEES;
+
+SELECT   DISTINCT B.EMPLOYEE_ID,B.FIRST_NAME ||'   '||B.LAST_NAME FULL_NAME, B.SALARY ,B.DEPARTMENT_ID  FROM  EMPLOYEES A, EMPLOYEES B 
+WHERE A.EMPLOYEE_ID <> B.EMPLOYEE_ID AND A.SALARY = B.SALARY  ORDER BY B.EMPLOYEE_ID;
+
+
+
+
+select * from triangle;
+
+SELECT CASE 
+WHEN  A+B>C AND B+C>A AND C+A>B THEN CASE
+                                                                                                  WHEN A=B AND B=C AND C=A THEN 'EQUILATERAL'
+                                                                                                  WHEN A=B OR  B=C OR  C=A   THEN 'ISOSCELES'
+                                                                                                  ELSE 'SCALENE'
+                                                                                        END
+ ELSE 'NOT A TRIANGLE' 
+ END  TYPE_OF_TRIANGLES FROM TRIANGLE;          
+ 
+ 
+ SELECT   ADD_MONTHS(TRUNC(TO_DATE('01/01/2022','DD/MM/YYYY'),'MM'),LEVEL-1) FIRST_DAY,
+ADD_MONTHS(LAST_DAY(TO_DATE('01/01/2022','DD/MM/YYYY')),LEVEL-1) LAST_DAY 
+FROM DUAL
+CONNECT BY 
+LEVEL<=TRUNC(MONTHS_BETWEEN(TO_DATE('01-01-2024','DD-MM-YYYY'),SYSDATE))+2;
+
+
+
 
 
 
